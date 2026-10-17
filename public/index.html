@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiaan License Cloud - Multi-Product DRM & Licensing Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap');
+    
+    :root {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    /* Subtle 3D Grid Background */
+    .bg-grid-pattern {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    }
+
+    /* Floating 3D Orbs Animations */
+    @keyframes floatOrb1 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(40px, -35px) scale(1.15); }
+    }
+    @keyframes floatOrb2 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(-35px, 40px) scale(0.9); }
+    }
+    @keyframes floatOrb3 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(30px, 30px) scale(1.1); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.35); opacity: 0; }
+      100% { transform: scale(0.95); opacity: 0; }
+    }
+    @keyframes modal3DIn {
+      0% { opacity: 0; transform: perspective(1000px) scale(0.92) rotateX(8deg) translateY(20px); }
+      100% { opacity: 1; transform: perspective(1000px) scale(1) rotateX(0deg) translateY(0); }
+    }
+
+    .orb-1 { animation: floatOrb1 18s ease-in-out infinite; }
+    .orb-2 { animation: floatOrb2 22s ease-in-out infinite; }
+    .orb-3 { animation: floatOrb3 16s ease-in-out infinite; }
+
+    .shimmer-btn {
+      background-size: 200% auto;
+      background-image: linear-gradient(115deg, #4f46e5 0%, #7c3aed 25%, #6366f1 50%, #7c3aed 75%, #4f46e5 100%);
+      animation: shimmer 4s linear infinite;
+    }
+
+    .radar-pulse::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 9999px;
+      border: 2px solid #10b981;
+      animation: pulseRing 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+
+    /* 3D Tilt Card Base */
+    .tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+      will-change: transform;
+      position: relative;
+    }
+    .tilt-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .tilt-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Table Row 3D Hover */
+    .table-row-3d {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .table-row-3d:hover {
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: translateX(4px);
+      box-shadow: inset 3px 0 0 #6366f1;
+    }
+
+    /* Modal Animation */
+    .modal-3d {
+      animation: modal3DIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080c16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+  </style>
+</head>
+<body class="bg-[#080c16] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white bg-grid-pattern relative overflow-x-hidden">
+
+  <!-- Interactive 3D Cyber Constellation Canvas -->
+  <canvas id="cyberCanvas" class="fixed inset-0 pointer-events-none -z-10"></canvas>
+
+  <!-- Animated 3D Floating Nebula Glowing Orbs -->
+  <div class="fixed top-[-10%] left-[15%] w-[480px] h-[480px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/10 to-transparent rounded-full blur-[100px] pointer-events-none -z-10 orb-1"></div>
+  <div class="fixed bottom-[-10%] right-[10%] w-[520px] h-[520px] bg-gradient-to-bl from-cyan-500/15 via-blue-600/10 to-transparent rounded-full blur-[110px] pointer-events-none -z-10 orb-2"></div>
+  <div class="fixed top-[45%] right-[30%] w-[380px] h-[380px] bg-gradient-to-br from-emerald-500/10 via-teal-600/10 to-transparent rounded-full blur-[90px] pointer-events-none -z-10 orb-3"></div>
+
+  <!-- Top Navbar -->
+  <header class="border-b border-slate-800/80 bg-slate-950/75 backdrop-blur-2xl sticky top-0 z-30 shadow-lg shadow-black/20">
+    <div class="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
+      
+      <!-- Brand Logo with 3D Glow -->
+      <div class="flex items-center gap-3.5 group cursor-default">
+        <div class="relative">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 p-[1.5px] transition-all duration-300 group-hover:scale-105 group-hover:shadow-indigo-500/40 shadow-lg shadow-indigo-500/20">
+            <div class="w-full h-full bg-[#0a0f1d] rounded-[14px] flex items-center justify-center text-indigo-400 font-black text-xl tracking-tight">
+              K
+            </div>
+          </div>
+          <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-950 rounded-full"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-black tracking-tight text-white flex items-center gap-1.5">
+              <span>KIAAN LICENSE CLOUD</span>
+              <span class="text-[9px] font-black tracking-widest uppercase bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded-md shadow-xs">v2.5</span>
+            </h1>
+          </div>
+          <p class="text-[11px] font-medium text-slate-400 flex items-center gap-1.5">
+            <span>Multi-Product Central DRM</span>
+            <span class="text-slate-600">•</span>
+            <span class="text-emerald-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>First-Activation Auto-Bind Active</span>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div id="authActions" class="hidden flex items-center gap-3">
+        <button onclick="openApiDocsModal()" class="text-xs font-bold text-slate-300 hover:text-white px-3.5 py-2 rounded-xl border border-slate-800 hover:border-slate-700 bg-slate-900/60 hover:bg-slate-900 transition-all flex items-center gap-2 cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]">
+          <i data-lucide="terminal" class="w-4 h-4 text-indigo-400"></i>
+          <span>API Reference</span>
+        </button>
+
+        <div class="h-5 w-[1px] bg-slate-800 hidden sm:block"></div>
+
+        <span class="hidden sm:flex text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 items-center gap-2 shadow-xs relative">
+          <span class="relative flex w-2 h-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+          </span>
+          <span>Online : Port 7000</span>
+        </span>
+
+        <button onclick="logout()" class="text-xs font-bold text-slate-400 hover:text-rose-300 px-3 py-2 rounded-xl border border-slate-800/80 hover:border-rose-500/30 hover:bg-rose-500/10 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02] active:scale-[0.98]">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Modal / Screen with 3D Tilt -->
+  <div id="loginScreen" class="flex-1 flex items-center justify-center p-6">
+    <div class="tilt-card w-full max-w-md bg-slate-900/85 border border-slate-800/80 rounded-3xl p-8 shadow-2xl backdrop-blur-2xl relative overflow-hidden">
+      <div class="absolute -right-16 -top-16 w-44 h-44 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-6 shadow-inner">
+        <i data-lucide="shield-check" class="w-7 h-7"></i>
+      </div>
+
+      <h2 class="text-2xl font-black text-white tracking-tight">Kiaan DRM Admin</h2>
+      <p class="text-xs text-slate-400 mt-1 mb-8 leading-relaxed">
+        Authenticate with your master password to monitor domain activations, multi-channel sales, and generate product keys.
+      </p>
+
+      <form onsubmit="handleLogin(event)" class="space-y-5">
+        <div>
+          <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider block mb-2">Master Admin Password</label>
+          <div class="relative">
+            <input id="adminPassword" type="password" required placeholder="••••••••••••" class="w-full bg-[#0a0f1d] border border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none transition-all placeholder:text-slate-600 font-mono shadow-inner">
+          </div>
+        </div>
+        <button type="submit" class="w-full shimmer-btn text-white font-black py-3.5 px-4 rounded-xl text-sm transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.01] active:scale-[0.99]">
+          <span>Unlock License Dashboard</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <main id="dashboardScreen" class="hidden flex-1 max-w-7xl mx-auto px-6 py-8 w-full space-y-8">
+    
+    <!-- Top Stats / 3D Tilt KPI Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      
+      <!-- Stat 1: Total Licenses -->
+      <div class="tilt-card bg-slate-900/75 border border-slate-800/80 p-5 rounded-3xl relative overflow-hidden group hover:border-indigo-500/50 transition-all shadow-xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Total Issued</span>
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shadow-xs">
+            <i data-lucide="key-round" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-white tracking-tight" id="statTotal">0</div>
+        <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+          <span>Codester & Direct Sales</span>
+        </div>
+      </div>
+
+      <!-- Stat 2: Active Bound Domains -->
+      <div class="tilt-card bg-slate-900/75 border border-slate-800/80 p-5 rounded-3xl relative overflow-hidden group hover:border-emerald-500/50 transition-all shadow-xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Active Domains</span>
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-xs">
+            <i data-lucide="globe-2" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-emerald-400 tracking-tight" id="statActive">0</div>
+        <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Live in Production</span>
+        </div>
+      </div>
+
+      <!-- Stat 3: Codester Channel -->
+      <div class="tilt-card bg-slate-900/75 border border-slate-800/80 p-5 rounded-3xl relative overflow-hidden group hover:border-cyan-500/50 transition-all shadow-xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Codester Sales</span>
+          <div class="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shadow-xs">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-cyan-400 tracking-tight" id="statCodester">0</div>
+        <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+          <span>Auto-Bind Order IDs</span>
+        </div>
+      </div>
+
+      <!-- Stat 4: Commercial SaaS (Extended) -->
+      <div class="tilt-card bg-slate-900/75 border border-slate-800/80 p-5 rounded-3xl relative overflow-hidden group hover:border-amber-500/50 transition-all shadow-xl backdrop-blur-xl">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Extended SaaS</span>
+          <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shadow-xs">
+            <i data-lucide="crown" class="w-4 h-4"></i>
+          </div>
+        </div>
+        <div class="text-3xl font-black text-amber-400 tracking-tight" id="statExtended">0</div>
+        <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+          <span>Multi-Tenant Access</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Main Section: Filter Toolbar + Licenses Table -->
+    <div class="bg-slate-900/75 border border-slate-800/80 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-2xl transition-all">
+      
+      <!-- Table Header & Controls -->
+      <div class="p-6 border-b border-slate-800/80 space-y-4">
+        
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h2 class="text-lg font-black text-white tracking-tight">Active Product Licenses</h2>
+              <span id="badgeFilteredCount" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">2 total</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">Codester Order IDs, direct license keys, and real-time domain bindings.</p>
+          </div>
+
+          <div class="flex items-center gap-2.5 w-full md:w-auto">
+            <button onclick="loadLicenses()" class="p-2.5 bg-slate-950/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 transition-all cursor-pointer shadow-sm hover:text-white hover:scale-105 active:scale-95" title="Refresh Licenses">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+            </button>
+            <button onclick="openModal()" class="shimmer-btn text-white text-xs font-black px-4 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 cursor-pointer w-full md:w-auto hover:scale-[1.02] active:scale-[0.98]">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i>
+              <span>Add Codester Sale / Generate Key</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+          
+          <!-- Search Input -->
+          <div class="relative sm:col-span-2">
+            <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input 
+              id="searchInput" 
+              type="text" 
+              oninput="handleSearch(this.value)" 
+              placeholder="Search by Order ID, Key, Product, Buyer name, Channel or Domain..." 
+              class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-all font-mono"
+            >
+          </div>
+
+          <!-- Product Filter -->
+          <div>
+            <select id="filterProduct" onchange="filterLicenses()" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer">
+              <option value="ALL">All Products</option>
+              <option value="biotrack-pro">BioTrack Pro (HRM)</option>
+              <option value="clinic-pro">Clinic Management</option>
+              <option value="pos-master">POS System</option>
+            </select>
+          </div>
+
+          <!-- Channel Filter -->
+          <div>
+            <select id="filterChannel" onchange="filterLicenses()" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500 cursor-pointer">
+              <option value="ALL">All Channels</option>
+              <option value="codester">Codester</option>
+              <option value="codecanyon">CodeCanyon</option>
+              <option value="direct">Direct Client</option>
+              <option value="gumroad">Gumroad</option>
+              <option value="lemonsqueezy">LemonSqueezy</option>
+              <option value="fiverr">Fiverr</option>
+              <option value="upwork">Upwork</option>
+            </select>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Table Body with 3D Row Effects -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-950/80 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800/80 font-black">
+            <tr>
+              <th class="p-4 pl-6">Product</th>
+              <th class="p-4">License Key / Order ID</th>
+              <th class="p-4">Buyer & Channel</th>
+              <th class="p-4">License Type</th>
+              <th class="p-4">Bound Domain</th>
+              <th class="p-4">Status</th>
+              <th class="p-4 pr-6 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="licenseTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+            <!-- Dynamic Rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden py-16 px-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-slate-800/50 text-slate-500 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="inbox" class="w-6 h-6"></i>
+        </div>
+        <h4 class="text-sm font-bold text-slate-300">No matching licenses found</h4>
+        <p class="text-xs text-slate-500 mt-1">Try adjusting your search query or add a new license.</p>
+      </div>
+
+    </div>
+
+    <!-- Server Health & Diagnostics Strip -->
+    <div class="bg-slate-900/50 border border-slate-800/60 rounded-2xl p-5 text-xs text-slate-400 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
+          <i data-lucide="cpu" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="text-slate-300 font-bold flex items-center gap-2">
+            <span>Cluster Status: Verified Healthy</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          </div>
+          <p class="text-[11px] text-slate-500">Auto-Bind Option 1 Active • Reviewer Localhost Bypass 100% Armed</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 text-[11px] font-mono text-slate-400">
+        <div>Uptime: <span id="diagUptime" class="text-slate-200 font-bold">--</span></div>
+        <span class="text-slate-700">•</span>
+        <div>Node: <span id="diagNode" class="text-slate-200 font-bold">--</span></div>
+        <span class="text-slate-700">•</span>
+        <div>Heap: <span id="diagMemory" class="text-slate-200 font-bold">-- MB</span></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Create License Modal (3D Pop In) -->
+  <div id="createModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="modal-3d bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative shadow-indigo-500/10">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between mb-5 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-white">Add Marketplace Sale / Key</h3>
+            <p class="text-[11px] text-slate-400">Issue an Order ID or generate a direct license key.</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-all cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreate(event)" class="space-y-4">
+        
+        <!-- Product & Sales Channel Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5">Target Product *</label>
+            <select id="newProduct" onchange="toggleCustomProduct(this.value)" class="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-indigo-500 outline-none cursor-pointer">
+              <option value="biotrack-pro">BioTrack Pro (HRM)</option>
+              <option value="clinic-pro">Clinic Management</option>
+              <option value="pos-master">POS System</option>
+              <option value="CUSTOM">+ Type Custom Product...</option>
+            </select>
+            <div id="customProductWrapper" class="hidden mt-2">
+              <label class="text-[9px] font-bold text-indigo-400 uppercase tracking-wider block mb-0.5">Custom Product Slug *</label>
+              <input id="customProductName" type="text" placeholder="e.g. school-erp, salon-crm" class="w-full bg-[#0a0f1d] border border-indigo-500/50 rounded-xl px-3 py-2 text-xs text-white mono placeholder:text-slate-600 focus:border-indigo-400 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5">Sales Channel *</label>
+            <select id="newChannel" onchange="toggleCustomChannel(this.value)" class="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-indigo-500 outline-none cursor-pointer">
+              <option value="Codester">Codester</option>
+              <option value="CodeCanyon">CodeCanyon</option>
+              <option value="Direct Client">Direct Client</option>
+              <option value="Gumroad">Gumroad</option>
+              <option value="LemonSqueezy">LemonSqueezy</option>
+              <option value="Fiverr">Fiverr</option>
+              <option value="Upwork">Upwork</option>
+              <option value="CUSTOM">+ Type Custom Channel...</option>
+            </select>
+            <div id="customChannelWrapper" class="hidden mt-2">
+              <label class="text-[9px] font-bold text-cyan-400 uppercase tracking-wider block mb-0.5">Custom Channel Name *</label>
+              <input id="customChannelName" type="text" placeholder="e.g. AppSumo, Freelancer, Offline" class="w-full bg-[#0a0f1d] border border-cyan-500/50 rounded-xl px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:border-cyan-400 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- License Reference Box -->
+        <div class="p-4 bg-[#0a0f1d] rounded-2xl border border-slate-800/90 space-y-3.5">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-[10px] font-black text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="receipt" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Option A: Marketplace Order ID</span>
+              </label>
+              <span class="text-[10px] text-slate-500 font-medium">Codester / CodeCanyon Receipt</span>
+            </div>
+            <input id="newOrderId" type="text" placeholder="e.g. #104529" class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white mono focus:border-indigo-500 outline-none placeholder:text-slate-600">
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="flex-1 border-t border-slate-800"></div>
+            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">OR</span>
+            <div class="flex-1 border-t border-slate-800"></div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-[10px] font-black text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="key" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <span>Option B: Direct License Key</span>
+              </label>
+              <button type="button" onclick="generateKeyForInput()" class="text-[10px] font-bold text-indigo-300 hover:text-white flex items-center gap-1 cursor-pointer bg-indigo-500/20 hover:bg-indigo-500/30 px-2.5 py-1 rounded-lg border border-indigo-500/30 transition-all hover:scale-105 active:scale-95">
+                <i data-lucide="sparkles" class="w-3 h-3 text-indigo-400"></i>
+                <span>Generate Key</span>
+              </button>
+            </div>
+            <input id="newKey" type="text" placeholder="e.g. KT-PRO-2026-ABCD-1234" class="w-full bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white mono focus:border-indigo-500 outline-none placeholder:text-slate-600">
+          </div>
+          
+          <p class="text-[10px] text-amber-400/90 font-medium flex items-center gap-1.5">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5 shrink-0"></i>
+            <span>Provide an Order ID or click 'Generate Key'. Cannot save empty.</span>
+          </p>
+        </div>
+
+        <!-- Buyer & License Tier -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5">Buyer Name (Optional)</label>
+            <input id="newName" type="text" placeholder="John Doe" class="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-indigo-500 outline-none placeholder:text-slate-600">
+          </div>
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5">License Tier</label>
+            <select id="newType" class="w-full bg-[#0a0f1d] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:border-indigo-500 outline-none cursor-pointer">
+              <option value="REGULAR">Regular (Single Company)</option>
+              <option value="EXTENDED">Extended (Commercial SaaS)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="pt-3 flex justify-end gap-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 text-xs font-bold text-slate-400 hover:text-white transition-all cursor-pointer">Cancel</button>
+          <button type="submit" class="shimmer-btn text-white text-xs font-black px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/30 cursor-pointer hover:scale-[1.02] active:scale-[0.98]">Save & Issue License</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- API Reference & Docs Modal (3D Pop In) -->
+  <div id="apiDocsModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="modal-3d bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 shadow-2xl relative shadow-indigo-500/10">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="code-2" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-black text-white">Client API Reference</h3>
+            <p class="text-[11px] text-slate-400">Endpoints called by your product backends to activate & verify domains.</p>
+          </div>
+        </div>
+        <button onclick="closeApiDocsModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-all cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div>
+          <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded uppercase">POST /api/license/activate</span>
+          <p class="text-slate-400 mt-1">Called by the client application on live server domain activation:</p>
+          <pre class="bg-[#0a0f1d] p-3 rounded-xl border border-slate-800 mono text-[11px] text-indigo-300 mt-1.5 overflow-x-auto shadow-inner">curl -X POST http://localhost:7000/api/license/activate \
+  -H "Content-Type: application/json" \
+  -d '{"product": "biotrack-pro", "key": "#104529", "domain": "clienthrm.com", "licenseType": "REGULAR"}'</pre>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded uppercase">POST /api/license/verify</span>
+          <p class="text-slate-400 mt-1">Periodic heartbeat verification from active instances:</p>
+          <pre class="bg-[#0a0f1d] p-3 rounded-xl border border-slate-800 mono text-[11px] text-cyan-300 mt-1.5 overflow-x-auto shadow-inner">curl -X POST http://localhost:7000/api/license/verify \
+  -H "Content-Type: application/json" \
+  -d '{"product": "biotrack-pro", "key": "#104529", "domain": "clienthrm.com"}'</pre>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-3 border-t border-slate-800 text-right">
+        <button onclick="closeApiDocsModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold cursor-pointer transition-all">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 border border-slate-700 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5">
+    <i id="toastIcon" data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+  <script>
+    let token = localStorage.getItem('kiaan_admin_token');
+    let allLicenses = [];
+
+    // ==========================================
+    // 1. Interactive 3D Cyber Constellation Engine
+    // ==========================================
+    const canvas = document.getElementById('cyberCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = [];
+      const count = Math.min(Math.floor((width * height) / 22000), 55);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          z: Math.random() * 0.8 + 0.2, // depth
+          vx: (Math.random() - 0.5) * 0.45,
+          vy: (Math.random() - 0.5) * 0.45,
+          radius: Math.random() * 2 + 1,
+          color: Math.random() > 0.4 ? 'rgba(99, 102, 241,' : (Math.random() > 0.5 ? 'rgba(6, 182, 212,' : 'rgba(16, 185, 129,')
+        });
+      }
+    }
+
+    window.addEventListener('resize', initCanvas);
+    window.addEventListener('mousemove', (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+    });
+
+    function renderCanvas() {
+      // Smooth mouse follow
+      mouse.x += (mouse.targetX - mouse.x) * 0.1;
+      mouse.y += (mouse.targetY - mouse.y) * 0.1;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw and connect particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx * p.z;
+        p.y += p.vy * p.z;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        // Mouse magnetic repel/attract
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          const force = (140 - dist) / 140;
+          p.x -= (dx / dist) * force * 1.5;
+          p.y -= (dy / dist) * force * 1.5;
+        }
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius * p.z, 0, Math.PI * 2);
+        ctx.fillStyle = `${p.color} ${0.25 * p.z})`;
+        ctx.fill();
+
+        // Connect with nearby
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dist2 = Math.hypot(p.x - p2.x, p.y - p2.y);
+          if (dist2 < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            const alpha = (1 - dist2 / 120) * 0.12 * p.z;
+            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            ctx.lineWidth = 0.75;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(renderCanvas);
+    }
+    initCanvas();
+    renderCanvas();
+
+    // ==========================================
+    // 2. Pure 3D Card Tilt & Specular Glare Engine
+    // ==========================================
+    function init3DTilt() {
+      const tiltCards = document.querySelectorAll('.tilt-card');
+      tiltCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          
+          const rotY = (x * 16).toFixed(2);
+          const rotX = (-y * 16).toFixed(2);
+          
+          card.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.025, 1.025, 1.025)`;
+          card.style.boxShadow = `${-x * 20}px ${-y * 20}px 35px -5px rgba(99, 102, 241, 0.25)`;
+          
+          const glareX = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+          const glareY = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+          card.style.setProperty('--glare-x', `${glareX}%`);
+          card.style.setProperty('--glare-y', `${glareY}%`);
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+          card.style.boxShadow = '';
+        });
+      });
+    }
+
+    // ==========================================
+    // 3. Smooth Animated Count-Up Ticker
+    // ==========================================
+    function animateCounter(elId, targetNum) {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      const start = parseInt(el.innerText) || 0;
+      const end = parseInt(targetNum) || 0;
+      if (start === end) { el.innerText = end; return; }
+
+      const duration = 650;
+      const startTime = performance.now();
+
+      function frame(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+        el.innerText = Math.round(start + (end - start) * ease);
+        if (progress < 1) requestAnimationFrame(frame);
+        else el.innerText = end;
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // ==========================================
+    // 4. UI Toast & Core Application Logic
+    // ==========================================
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      
+      toastMsg.innerText = msg;
+      if (isError) {
+        toastIcon.setAttribute('data-lucide', 'alert-triangle');
+        toastIcon.className = 'w-4 h-4 text-rose-400';
+      } else {
+        toastIcon.setAttribute('data-lucide', 'check-circle-2');
+        toastIcon.className = 'w-4 h-4 text-emerald-400';
+      }
+      lucide.createIcons();
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    async function checkAuth() {
+      if (token) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboardScreen').classList.remove('hidden');
+        document.getElementById('authActions').classList.remove('hidden');
+        loadLicenses();
+        loadSystemStats();
+      } else {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('dashboardScreen').classList.add('hidden');
+        document.getElementById('authActions').classList.add('hidden');
+      }
+      lucide.createIcons();
+      setTimeout(init3DTilt, 100);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const password = document.getElementById('adminPassword').value;
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          token = data.token;
+          localStorage.setItem('kiaan_admin_token', token);
+          checkAuth();
+          showToast('Welcome back, Admin!');
+        } else {
+          showToast(data.error || 'Login failed', true);
+        }
+      } catch (err) {
+        showToast('Could not connect to server', true);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('kiaan_admin_token');
+      token = null;
+      checkAuth();
+      showToast('Logged out successfully.');
+    }
+
+    async function loadLicenses() {
+      try {
+        const res = await fetch('/api/admin/licenses', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          allLicenses = data.licenses || [];
+          filterLicenses();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadSystemStats() {
+      try {
+        const res = await fetch('/api/admin/system-stats', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success && data.system) {
+          document.getElementById('diagUptime').innerText = data.system.uptime || '--';
+          document.getElementById('diagNode').innerText = data.system.nodeVersion || '--';
+          document.getElementById('diagMemory').innerText = `${data.system.memoryMb || 24} MB`;
+        }
+      } catch (e) {}
+    }
+
+    function handleSearch(val) {
+      filterLicenses();
+    }
+
+    function filterLicenses() {
+      const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+      const selectedProduct = document.getElementById('filterProduct')?.value || 'ALL';
+      const selectedChannel = document.getElementById('filterChannel')?.value || 'ALL';
+
+      const filtered = allLicenses.filter(lic => {
+        const matchesProduct = selectedProduct === 'ALL' || (lic.product || '').toLowerCase() === selectedProduct.toLowerCase();
+        const matchesChannel = selectedChannel === 'ALL' || (lic.channel || '').toLowerCase().includes(selectedChannel.toLowerCase());
+        
+        const qMatch = !query || 
+          (lic.license_key || '').toLowerCase().includes(query) ||
+          (lic.order_id || '').toLowerCase().includes(query) ||
+          (lic.customer_name || '').toLowerCase().includes(query) ||
+          (lic.product || '').toLowerCase().includes(query) ||
+          (lic.channel || '').toLowerCase().includes(query) ||
+          (lic.bound_domain || '').toLowerCase().includes(query);
+
+        return matchesProduct && matchesChannel && qMatch;
+      });
+
+      renderTable(filtered);
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      showToast(`Copied: ${text}`);
+    }
+
+    function renderTable(licenses) {
+      const tbody = document.getElementById('licenseTableBody');
+      const emptyState = document.getElementById('emptyState');
+      tbody.innerHTML = '';
+
+      // Smooth Animated count-up for stats
+      animateCounter('statTotal', allLicenses.length);
+      animateCounter('statActive', allLicenses.filter(l => l.bound_domain).length);
+      animateCounter('statCodester', allLicenses.filter(l => l.channel && l.channel.toLowerCase().includes('codester')).length);
+      animateCounter('statExtended', allLicenses.filter(l => l.license_type === 'EXTENDED').length);
+      document.getElementById('badgeFilteredCount').innerText = `${licenses.length} of ${allLicenses.length} displayed`;
+
+      if (licenses.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      licenses.forEach(lic => {
+        const tr = document.createElement('tr');
+        tr.className = 'table-row-3d group border-b border-slate-800/40 cursor-default';
+        
+        let productIcon = 'box';
+        let prodColor = 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20';
+        if (lic.product.includes('biotrack') || lic.product.includes('hrm')) {
+          productIcon = 'users';
+          prodColor = 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20';
+        } else if (lic.product.includes('clinic')) {
+          productIcon = 'activity';
+          prodColor = 'text-rose-400 bg-rose-500/10 border-rose-500/20';
+        } else if (lic.product.includes('pos')) {
+          productIcon = 'shopping-cart';
+          prodColor = 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+        }
+
+        const initials = (lic.customer_name || 'MB').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+        tr.innerHTML = `
+          <!-- Product -->
+          <td class="p-4 pl-6 font-bold text-white uppercase text-[11px]">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl ${prodColor} border flex items-center justify-center shrink-0 shadow-xs">
+                <i data-lucide="${productIcon}" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="tracking-wide">${lic.product}</span>
+                <div class="text-[9px] text-slate-500 uppercase tracking-widest font-normal">Registered App</div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Key / Order ID -->
+          <td class="p-4 mono">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-indigo-400 font-mono tracking-tight text-xs">${lic.license_key}</span>
+              <button onclick="copyToClipboard('${lic.license_key}')" class="opacity-40 group-hover:opacity-100 hover:text-white p-1 rounded transition-all cursor-pointer hover:scale-110 active:scale-95" title="Copy Key">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+            ${lic.order_id ? `
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-[10px] font-black text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.2 rounded">Order: ${lic.order_id}</span>
+              </div>
+            ` : ''}
+          </td>
+
+          <!-- Buyer & Channel -->
+          <td class="p-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-slate-800 to-slate-700 text-slate-300 font-black text-[10px] flex items-center justify-center shrink-0 border border-slate-700 shadow-xs">
+                ${initials}
+              </div>
+              <div>
+                <div class="font-bold text-slate-200 text-xs">${lic.customer_name || 'Marketplace Buyer'}</div>
+                <div class="text-[10px] text-slate-500">${lic.channel || 'Codester'}</div>
+              </div>
+            </div>
+          </td>
+
+          <!-- License Type -->
+          <td class="p-4 font-bold">
+            ${lic.license_type === 'EXTENDED' ? `
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1 w-max shadow-xs">
+                <i data-lucide="crown" class="w-3 h-3"></i>
+                <span>EXTENDED SAAS</span>
+              </span>
+            ` : `
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-800/80 text-slate-300 border border-slate-700 w-max inline-block">
+                REGULAR
+              </span>
+            `}
+          </td>
+
+          <!-- Bound Domain -->
+          <td class="p-4 mono">
+            ${lic.bound_domain ? `
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-emerald-400 font-bold text-xs tracking-tight">${lic.bound_domain}</span>
+              </div>
+              <div class="text-[9px] text-slate-500 font-sans mt-0.5">Live Linked</div>
+            ` : `
+              <div class="flex items-center gap-1.5 text-slate-500 italic text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                <span>Unbound (Waiting Live Setup)</span>
+              </div>
+            `}
+          </td>
+
+          <!-- Status -->
+          <td class="p-4">
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-black ${lic.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} flex items-center gap-1.5 w-max">
+              <span class="w-1.5 h-1.5 rounded-full ${lic.status === 'ACTIVE' ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
+              <span>${lic.status}</span>
+            </span>
+          </td>
+
+          <!-- Actions -->
+          <td class="p-4 pr-6 text-right space-x-1.5">
+            ${lic.bound_domain ? `
+              <button onclick="resetDomain('${lic.id}')" class="px-2.5 py-1.5 text-[11px] font-bold bg-slate-800/90 hover:bg-slate-700 text-amber-300 hover:text-amber-200 rounded-xl border border-slate-700 transition-all cursor-pointer hover:scale-105 active:scale-95" title="Release Domain for Customer Migration">
+                Reset Domain
+              </button>
+            ` : ''}
+            <button onclick="toggleStatus('${lic.id}')" class="px-2.5 py-1.5 text-[11px] font-bold bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 transition-all cursor-pointer hover:scale-105 active:scale-95">
+              Toggle
+            </button>
+            <button onclick="deleteLic('${lic.id}')" class="p-1.5 text-[11px] bg-rose-950/30 hover:bg-rose-900/50 text-rose-400 hover:text-rose-300 rounded-xl border border-rose-900/40 transition-all cursor-pointer inline-flex items-center justify-center hover:scale-110 active:scale-95" title="Delete License">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      lucide.createIcons();
+    }
+
+    async function resetDomain(id) {
+      if (!confirm('Reset bound domain for this license? Buyer can now activate on a new live domain.')) return;
+      await fetch(`/api/admin/licenses/${id}/reset-domain`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      showToast('Domain reset. Ready for re-activation.');
+      loadLicenses();
+    }
+
+    async function toggleStatus(id) {
+      await fetch(`/api/admin/licenses/${id}/toggle-status`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      showToast('License status updated.');
+      loadLicenses();
+    }
+
+    async function deleteLic(id) {
+      if (!confirm('Permanently delete this license record?')) return;
+      await fetch(`/api/admin/licenses/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      showToast('License permanently deleted.');
+      loadLicenses();
+    }
+
+    function toggleCustomProduct(val) {
+      const wrapper = document.getElementById('customProductWrapper');
+      const input = document.getElementById('customProductName');
+      if (val === 'CUSTOM') {
+        wrapper.classList.remove('hidden');
+        input.focus();
+      } else {
+        wrapper.classList.add('hidden');
+        input.value = '';
+      }
+    }
+
+    function toggleCustomChannel(val) {
+      const wrapper = document.getElementById('customChannelWrapper');
+      const input = document.getElementById('customChannelName');
+      if (val === 'CUSTOM') {
+        wrapper.classList.remove('hidden');
+        input.focus();
+      } else {
+        wrapper.classList.add('hidden');
+        input.value = '';
+      }
+    }
+
+    function generateKeyForInput() {
+      const prod = document.getElementById('newProduct').value;
+      const customProd = document.getElementById('customProductName').value.trim();
+      let prefix = 'KT';
+      if (prod === 'CUSTOM' && customProd) {
+        prefix = customProd.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() || 'KT';
+      } else if (prod === 'clinic-pro') {
+        prefix = 'CLINIC';
+      } else if (prod === 'pos-master') {
+        prefix = 'POS';
+      } else {
+        prefix = 'KT';
+      }
+      const r1 = Math.floor(1000 + Math.random() * 9000);
+      const r2 = Math.floor(1000 + Math.random() * 9000);
+      const generated = `${prefix}-PRO-2026-${r1}-${r2}`;
+      document.getElementById('newKey').value = generated;
+      showToast('New license key generated!');
+    }
+
+    async function handleCreate(e) {
+      e.preventDefault();
+      const productSelect = document.getElementById('newProduct').value;
+      const customName = document.getElementById('customProductName').value.trim();
+      const channelSelect = document.getElementById('newChannel').value;
+      const customChannel = document.getElementById('customChannelName').value.trim();
+      const orderId = document.getElementById('newOrderId').value.trim();
+      const key = document.getElementById('newKey').value.trim();
+      const customerName = document.getElementById('newName').value.trim();
+
+      if (productSelect === 'CUSTOM' && !customName) {
+        alert('⚠️ Please enter the custom product slug (e.g. school-erp, salon-crm)!');
+        document.getElementById('customProductName').focus();
+        return;
+      }
+
+      if (channelSelect === 'CUSTOM' && !customChannel) {
+        alert('⚠️ Please enter the custom sales channel name (e.g. AppSumo, Freelancer, Offline)!');
+        document.getElementById('customChannelName').focus();
+        return;
+      }
+
+      if (!orderId && !key) {
+        alert('⚠️ Please enter either a Marketplace Order ID (e.g. #104529) or click "Generate Key"!');
+        return;
+      }
+
+      const finalProduct = productSelect === 'CUSTOM' ? customName.toLowerCase().replace(/[^a-z0-9_-]/g, '') : productSelect;
+      const finalChannel = channelSelect === 'CUSTOM' ? customChannel : channelSelect;
+
+      const body = {
+        product: finalProduct,
+        channel: finalChannel,
+        orderId: orderId,
+        key: key,
+        customerName: customerName || 'Marketplace Buyer',
+        licenseType: document.getElementById('newType').value
+      };
+
+      try {
+        const res = await fetch('/api/admin/licenses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeModal();
+          showToast('License created successfully!');
+          loadLicenses();
+        } else {
+          alert('❌ ' + (data.error || 'Failed to create license.'));
+        }
+      } catch (err) {
+        alert('❌ Could not connect to server.');
+      }
+    }
+
+    function openModal() { 
+      document.getElementById('newOrderId').value = '';
+      document.getElementById('newKey').value = '';
+      document.getElementById('newName').value = '';
+      document.getElementById('customProductName').value = '';
+      document.getElementById('newProduct').value = 'biotrack-pro';
+      document.getElementById('customProductWrapper').classList.add('hidden');
+      document.getElementById('newChannel').value = 'Codester';
+      document.getElementById('customChannelName').value = '';
+      document.getElementById('customChannelWrapper').classList.add('hidden');
+      document.getElementById('createModal').classList.remove('hidden'); 
+      lucide.createIcons();
+    }
+    function closeModal() { 
+      document.getElementById('createModal').classList.add('hidden'); 
+    }
+
+    function openApiDocsModal() {
+      document.getElementById('apiDocsModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeApiDocsModal() {
+      document.getElementById('apiDocsModal').classList.add('hidden');
+    }
+
+    // Keyboard shortcut '/' to search
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        document.getElementById('searchInput')?.focus();
+      }
+    });
+
+    checkAuth();
+  </script>
+</body>
+</html>
